@@ -1,10 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import DataContext from "./context/DataContext";
+// import { useContext } from "react";
+// import DataContext from "./context/DataContext";
+import { useEffect } from "react";
+import { useStoreActions, useStoreState } from "easy-peasy";
 
 function Nav() {
-    const { search, setSearch } = useContext(DataContext);
+    // const { search, setSearch } = useContext(DataContext);
+    const posts = useStoreState((state) => state.posts);
+    const search = useStoreState((state) => state.search);
+    const setSearch = useStoreActions((state) => state.setSearch);
+    const setSearchResults = useStoreActions((state) => state.setSearchResults);
+
+    useEffect(() => {
+        const filteredResults = posts.filter(
+            (post) =>
+                post.body.toLowerCase().includes(search.toLowerCase()) ||
+                post.title.toLowerCase().includes(search.toLowerCase())
+        );
+        setSearchResults(filteredResults.reverse());
+    }, [posts, search, setSearchResults]);
 
     return (
         <nav className="Nav">
